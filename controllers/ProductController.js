@@ -1,6 +1,8 @@
 var express = require("express");
 var router = express.Router();
 
+var productService = require("../services/ProductService");
+
 router.get("/", function(req, res) {
 
 });

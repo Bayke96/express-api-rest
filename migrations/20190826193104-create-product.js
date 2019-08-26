@@ -9,7 +9,11 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       categoryFK: {
-        type: Sequelize.INTEGER
+        type: DataTypes.INTEGER,
+        references: {
+          model: "Categories",
+          key: "id"
+        },
       },
       name: {
         type: Sequelize.STRING

@@ -1,6 +1,8 @@
 var express = require("express");
 var router = express.Router();
 
+var categoryService = require("../services/CategoryService");
+
 router.get("/", function(req, res) {
 
 });

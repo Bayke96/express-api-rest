@@ -1,6 +1,8 @@
 var express = require("express");
 var router = express.Router();
 
+var profileService = require("../services/ProfileService");
+
 router.get("/:id", function(req, res) {
 
 });
