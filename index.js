@@ -6,6 +6,9 @@ var productController = require("./controllers/ProductController");
 var userController = require("./controllers/UserController");
 var profileController = require("./controllers/ProfileController");
 
+var bodyParser = require('body-parser');
+app.use(bodyParser.json()); 
+
 app.use("/categories", categoryController);
 app.use("/products", productController);
 app.use("/users", userController);
