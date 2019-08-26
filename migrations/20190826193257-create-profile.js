@@ -9,26 +9,32 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       userFK: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: "Users",
           key: "id"
         },
       },
       firstname: {
-        type: Sequelize.STRING(128)
+        type: Sequelize.STRING(128),
+        allowNull: false
       },
       lastname: {
-        type: Sequelize.STRING(128)
+        type: Sequelize.STRING(128),
+        allowNull: false
       },
       email: {
-        type: Sequelize.STRING(128)
+        type: Sequelize.STRING(128),
+        allowNull: false
       },
       address: {
-        type: Sequelize.STRING(128)
+        type: Sequelize.STRING(128),
+        allowNull: false
       },
       number: {
-        type: Sequelize.STRING(128)
+        type: Sequelize.STRING(128),
+        allowNull: false
       },
       createdAt: {
         allowNull: false,

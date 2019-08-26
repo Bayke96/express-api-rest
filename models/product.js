@@ -2,7 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Product = sequelize.define('Product', {
     categoryFK: {
-      type:DataTypes.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false,
       isInt: true
     },
@@ -40,3 +40,8 @@ module.exports = (sequelize, DataTypes) => {
   };
   return Product;
 };
+
+Product.hasMany(Category, {
+  foreignKey: 'categoryFK',
+  sourceKey: 'id'
+});

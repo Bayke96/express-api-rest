@@ -9,23 +9,29 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       categoryFK: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: "Categories",
           key: "id"
         },
       },
       name: {
-        type: Sequelize.STRING(128)
+        type: Sequelize.STRING(128),
+        unique: true,
+        allowNull: false
       },
       description: {
-        type: Sequelize.STRING(128)
+        type: Sequelize.STRING(128),
+        allowNull: false
       },
       price: {
-        type: Sequelize.DOUBLE
+        type: Sequelize.DOUBLE,
+        allowNull: false
       },
       units: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
