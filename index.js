@@ -7,7 +7,7 @@ var userController = require("./controllers/UserController");
 var profileController = require("./controllers/ProfileController");
 
 var bodyParser = require('body-parser');
-app.use(bodyParser.json()); 
+app.use(bodyParser.json({ limit: '100mb' }));
 
 app.use("/categories", categoryController);
 app.use("/products", productController);
