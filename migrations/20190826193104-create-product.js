@@ -16,10 +16,10 @@ module.exports = {
         },
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(128)
       },
       description: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(128)
       },
       price: {
         type: Sequelize.DOUBLE

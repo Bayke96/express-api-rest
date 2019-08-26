@@ -16,19 +16,19 @@ module.exports = {
         },
       },
       firstname: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(128)
       },
       lastname: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(128)
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(128)
       },
       address: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(128)
       },
       number: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(128)
       },
       createdAt: {
         allowNull: false,
