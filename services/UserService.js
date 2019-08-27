@@ -6,17 +6,15 @@ const sequelize = new Sequelize(config.database, config.username,
 
 const User = sequelize.import('../models/user');
 
-const createUser = (userObject) => {
+const createUser = (userObject, callback) => {
 
     const newUser = User.build({ 
         name: userObject.name,
         password: userObject.password
     });
 
-    return newUser.save().then(() => {
-
-    }).finally(() => {
-        sequelize.close();
+    newUser.save().then((latestUser) => {
+        return callback(latestUser);
     });
 
 };

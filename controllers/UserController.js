@@ -21,13 +21,14 @@ router.post("/", function(req, res) {
         password: req.body.password
     };
 
-    createUser(newUser).then(function(result){
-        
-    });
+    createUser(newUser, function(response){
+        latestUser.id = response.id;
+        latestUser.name = response.name;
 
-    res.status(201);
-    res.header("Content-Type",'application/json');
-    res.send(JSON.stringify(latestUser, null, 4));
+        res.status(201);
+        res.header("Content-Type",'application/json');
+        res.send(JSON.stringify(latestUser, null, 4));
+    });
 });
 
 router.put("/:id", function(req, res) {
