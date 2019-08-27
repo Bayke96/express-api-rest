@@ -1,16 +1,24 @@
-var userModel = require("../models/user");
+const Sequelize = require('sequelize');
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/../config/config.json')[env];
+const sequelize = new Sequelize(config.database, config.username,
+    config.password, config);
+
+const User = sequelize.import('../models/user');
 
 const createUser = (userObject) => {
-    return User.create({
+
+    const newUser = User.build({ 
         name: userObject.name,
         password: userObject.password
-    }).then(function (users) {
-        if (users) {
-            return User;
-        } else {
-            return null;
-        }
     });
+
+    return newUser.save().then(() => {
+
+    }).finally(() => {
+        sequelize.close();
+    });
+
 };
 
-module.exports = createUser;
+module.exports = { createUser };
