@@ -13,8 +13,11 @@ const createUser = (userObject, callback) => {
         password: userObject.password
     });
 
-    newUser.save().then((latestUser) => {
+    newUser.save().
+    then(function(latestUser){
         return callback(latestUser);
+    }).catch(function (err) {
+        console.log("Error Identified: " + err);
     });
 
 };
