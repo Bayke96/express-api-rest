@@ -11,11 +11,19 @@ router.get("/", function(req, res) {
 router.get("/:id(\\d+)/", function(req, res) {
 
     getUser(req.params.id, function(response){
+
         // If an user has been found.
         if(response != null) {
+
+            var foundUser = {
+                id: response.id,
+                name: response.name,
+                createdAt: response.createdAt
+            };
+
             res.status(200);
             res.header("Content-Type",'application/json');
-            res.send(JSON.stringify(response, null, 4));
+            res.send(JSON.stringify(foundUser, null, 4));
         } 
         // Otherwise
         else 
