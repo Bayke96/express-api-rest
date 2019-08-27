@@ -99,4 +99,30 @@ const updateUser = (userObject, callback) => {
 
 };
 
-module.exports = { listUsers, getUser, getUserByName, createUser, updateUser };
+const deleteUser = (userID, callback) => {
+
+    getUser(userID, function(findUserResponse){
+
+        var deleted = {
+            id: findUserResponse.dataValues.id,
+            name: findUserResponse.dataValues.name,
+            createdAt: findUserResponse.dataValues.createdAt
+        };
+
+        User.destroy(
+            { where: { id: userID }, returning: true, plain: true } 
+        ).
+        then(function(deletedUserResponse){
+            return callback(deleted);
+    
+        }).catch(function (err) {
+            console.log("Error Identified: " + err);
+        });
+
+    });
+
+
+
+};
+
+module.exports = { listUsers, getUser, getUserByName, createUser, updateUser, deleteUser };

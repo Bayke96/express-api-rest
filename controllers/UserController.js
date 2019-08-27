@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 
-const { listUsers, getUser, getUserByName, createUser, updateUser } = require("../services/UserService");
+const { listUsers, getUser, getUserByName, createUser, updateUser, deleteUser } = require("../services/UserService");
 
 router.get("/", function(req, res) {
 
@@ -103,8 +103,8 @@ router.put("/:id(\\d+)/", function(req, res) {
 
                     // If there's another user with this name, return a conflict.
                     if(foundID != req.params.id && oldName == newName) {
-                    res.status(409);
-                    res.send("There's already an user with this name.");
+                        res.status(409);
+                        res.send("There's already an user with this name.");
                     }
                 } 
                 // Otherwise, proceed.
@@ -146,9 +146,29 @@ router.delete("/:id(\\d+)/", function(req, res) {
         // If an user has been found.
         if(response != null) {
 
-            res.status(200);
-            res.header("Content-Type",'application/json');
-            res.send(JSON.stringify(foundUser, null, 4));
+            deleteUser(req.params.id, function(deleteResponse){
+
+                // If an user has been found.
+                if(response != null) {
+        
+                    var deletedUser = {
+                        id: deleteResponse.id,
+                        name: deleteResponse.name,
+                        createdAt: deleteResponse.createdAt
+                    };
+        
+                    res.status(200);
+                    res.header("Content-Type",'application/json');
+                    res.send(JSON.stringify(deletedUser, null, 4));
+                } 
+                // Otherwise
+                else 
+                {
+                    res.status(404);
+                    res.send(null);
+                }
+            });
+
         } 
         // Otherwise
         else 
