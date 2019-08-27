@@ -46,6 +46,7 @@ router.post("/", function(req, res) {
     createUser(newUser, function(response){
         latestUser.id = response.id;
         latestUser.name = response.name;
+        latestUser.createdAt = response.createdAt;
 
         res.status(201);
         res.header("Content-Type",'application/json');
