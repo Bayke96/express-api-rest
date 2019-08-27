@@ -50,7 +50,7 @@ const getUserByName = (username, callback) => {
     then(function(foundUser){
         return callback(foundUser);
     }).catch(function (err) {
-        console.log("Error Identified: " + err);
+        return callback(null);
     });
 
 };
@@ -77,4 +77,26 @@ const createUser = (userObject, callback) => {
 
 };
 
-module.exports = { listUsers, getUser, getUserByName, createUser };
+const updateUser = (userObject, callback) => {
+
+    User.update(
+        { name: userObject.name },
+        { where: { id: userObject.id }, returning: true, plain: true } 
+    ).
+    then(function(updatedUserResponse){
+
+        var updated = {
+            id: updatedUserResponse[1].dataValues.id,
+            name: updatedUserResponse[1].dataValues.name,
+            createdAt: updatedUserResponse[1].dataValues.createdAt
+        };
+
+        return callback(updated);
+
+    }).catch(function (err) {
+        console.log("Error Identified: " + err);
+    });
+
+};
+
+module.exports = { listUsers, getUser, getUserByName, createUser, updateUser };

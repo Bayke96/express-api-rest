@@ -1,29 +1,29 @@
 var express = require("express");
 var router = express.Router();
 
-const { listUsers, getUser, getUserByName, createUser } = require("../services/UserService");
+const { listUsers, getUser, getUserByName, createUser, updateUser } = require("../services/UserService");
 
 router.get("/", function(req, res) {
-    res.header("Content-Type",'application/json');
-    res.status(200);
 
     listUsers(function(response){
 
         // If users have been found.
         if(response != null) {
+            // If more than one user has been found, return a list.
             if(response.length >= 1) {
                 res.status(200);
                 res.header("Content-Type",'application/json');
                 res.send(JSON.stringify(response, null, 4));
             } else {
+                // Otherwise, return not found.
                 res.status(204);
                 res.send(null);
             }
         } 
-        // Otherwise
+        // If there's an error, return error 404.
         else 
         {
-            res.status(404);
+            res.status(500);
             res.send(null);
         }
     });
@@ -60,6 +60,7 @@ router.get("/:id(\\d+)/", function(req, res) {
 router.post("/", function(req, res) {
 
     let latestUser = {};
+    // Create new user object from the request's body.
     const newUser = {
         name: req.body.name,
         password: req.body.password
@@ -87,13 +88,76 @@ router.post("/", function(req, res) {
 });
 
 router.put("/:id(\\d+)/", function(req, res) {
-    res.header("Content-Type",'application/json');
-    res.status(200);
+    
+    getUser(req.params.id, function(response){
+
+        // If an user has been found.
+        if(response != null) {
+
+            getUserByName(req.body.name, function(foundResponse){
+
+                if(foundResponse != null) {
+                    let foundID = foundResponse[0].dataValues.id;
+                    let oldName = foundResponse[0].dataValues.name.toString().toUpperCase();
+                    let newName = req.body.name.toString().toUpperCase();
+
+                    // If there's another user with this name, return a conflict.
+                    if(foundID != req.params.id && oldName == newName) {
+                    res.status(409);
+                    res.send("There's already an user with this name.");
+                    }
+                } 
+                // Otherwise, proceed.
+
+                // Create new user object from the request's body.
+                const newUser = {
+                    id: req.params.id,
+                    name: req.body.name
+                };
+
+                updateUser(newUser, function(updateResponse){
+                    var updatedUser = {};
+                    updatedUser.id = updateResponse.id;
+                    updatedUser.name = updateResponse.name;
+                    updatedUser.createdAt = updateResponse.createdAt;
+        
+                    res.status(200);
+                    res.header("Content-Type",'application/json');
+                    res.send(JSON.stringify(updatedUser, null, 4));
+                });
+
+            });
+
+        } 
+        // Otherwise
+        else 
+        {
+            res.status(404);
+            res.send(null);
+        }
+    });
+
 });
 
 router.delete("/:id(\\d+)/", function(req, res) {
-    res.header("Content-Type",'application/json');
-    res.status(200);
+    
+    getUser(req.params.id, function(response){
+
+        // If an user has been found.
+        if(response != null) {
+
+            res.status(200);
+            res.header("Content-Type",'application/json');
+            res.send(JSON.stringify(foundUser, null, 4));
+        } 
+        // Otherwise
+        else 
+        {
+            res.status(404);
+            res.send(null);
+        }
+    });
+
 });
 
 module.exports = router;
