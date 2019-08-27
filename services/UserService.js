@@ -12,6 +12,19 @@ const sequelize = new Sequelize(
 
 const User = sequelize.import('../models/user');
 
+const listUsers = (callback) => {
+
+    User.findAll({
+        attributes: ["id", "name", "createdAt"]
+    }).
+    then(function(userList){
+        return callback(userList);
+    }).catch(function (err) {
+        console.log("Error Identified: " + err);
+    });
+
+};
+
 const getUser = (userID, callback) => {
 
     User.findByPk(userID).
@@ -23,10 +36,29 @@ const getUser = (userID, callback) => {
 
 };
 
+const getUserByName = (username, callback) => {
+
+    var searchUsername = username.toString().toUpperCase();
+    User.findAll({
+        limit: 1,
+        attributes: ["id", "name", "createdAt"],
+        where: sequelize.where(
+            sequelize.fn('upper', sequelize.col('name')), 
+            sequelize.fn('upper', searchUsername)
+          )
+    }).
+    then(function(foundUser){
+        return callback(foundUser);
+    }).catch(function (err) {
+        console.log("Error Identified: " + err);
+    });
+
+};
+
 const createUser = (userObject, callback) => {
 
     bcrypt.hash(userObject.password.toString(), 12, function(err, hash) {
-        
+
         var encryptedPassword = hash;
 
         const newUser = User.build({ 
@@ -45,4 +77,4 @@ const createUser = (userObject, callback) => {
 
 };
 
-module.exports = { getUser, createUser };
+module.exports = { listUsers, getUser, getUserByName, createUser };
