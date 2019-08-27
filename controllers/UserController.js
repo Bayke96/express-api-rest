@@ -1,16 +1,30 @@
 var express = require("express");
 var router = express.Router();
 
-const { createUser } = require("../services/UserService");
+const { getUser, createUser } = require("../services/UserService");
 
 router.get("/", function(req, res) {
     res.header("Content-Type",'application/json');
     res.status(200);
 });
 
-router.get("/:id", function(req, res) {
-    res.header("Content-Type",'application/json');
-    res.status(200);
+router.get("/:id(\\d+)/", function(req, res) {
+
+    getUser(req.params.id, function(response){
+        // If an user has been found.
+        if(response != null) {
+            res.status(200);
+            res.header("Content-Type",'application/json');
+            res.send(JSON.stringify(response, null, 4));
+        } 
+        // Otherwise
+        else 
+        {
+            res.status(404);
+            res.send(null);
+        }
+    });
+
 });
 
 router.post("/", function(req, res) {
@@ -31,12 +45,12 @@ router.post("/", function(req, res) {
     });
 });
 
-router.put("/:id", function(req, res) {
+router.put("/:id(\\d+)/", function(req, res) {
     res.header("Content-Type",'application/json');
     res.status(200);
 });
 
-router.delete("/:id", function(req, res) {
+router.delete("/:id(\\d+)/", function(req, res) {
     res.header("Content-Type",'application/json');
     res.status(200);
 });

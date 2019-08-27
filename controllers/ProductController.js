@@ -8,7 +8,7 @@ router.get("/", function(req, res) {
     res.header("Content-Type",'application/json');
 });
 
-router.get("/:id", function(req, res) {
+router.get("/:id(\\d+)/", function(req, res) {
     res.status(200);
     res.header("Content-Type",'application/json');
 });
@@ -18,12 +18,12 @@ router.post("/", function(req, res) {
     res.header("Content-Type",'application/json');
 });
 
-router.put("/:id", function(req, res) {
+router.put("/:id(\\d+)/", function(req, res) {
     res.status(200);
     res.header("Content-Type",'application/json');
 });
 
-router.delete("/:id", function(req, res) {
+router.delete("/:id(\\d+)/", function(req, res) {
     res.status(200);
     res.header("Content-Type",'application/json');
 });
