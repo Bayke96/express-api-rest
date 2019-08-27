@@ -121,8 +121,6 @@ const deleteUser = (userID, callback) => {
 
     });
 
-
-
 };
 
 module.exports = { listUsers, getUser, getUserByName, createUser, updateUser, deleteUser };
