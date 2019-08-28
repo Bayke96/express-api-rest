@@ -1,6 +1,18 @@
 var express = require("express");
 var router = express.Router();
+const Sequelize = require('sequelize');
 
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/../config/config.json')[env];
+
+const sequelize = new Sequelize(
+    config.database, 
+    config.username,
+    config.password, 
+    config
+);
+
+const User = sequelize.import('../models/user');
 const { listUsers, getUser, getUserByName, createUser, updateUser, deleteUser } = require("../services/UserService");
 
 router.get("/", function(req, res) {
@@ -61,10 +73,10 @@ router.post("/", function(req, res) {
 
     let latestUser = {};
     // Create new user object from the request's body.
-    const newUser = {
+    const newUser = User.build({ 
         name: req.body.name,
-        password: req.body.password
-    };
+        password: req.body.password.toString()
+    });
 
     getUserByName(newUser.name, function(response){
         // There's already an user with this name.
@@ -73,13 +85,20 @@ router.post("/", function(req, res) {
             res.send("There's already an user with this name.");
         } else {
             createUser(newUser, function(response){
-                latestUser.id = response.id;
-                latestUser.name = response.name;
-                latestUser.createdAt = response.createdAt;
+
+                if(response.dataValues == undefined) {
+                    res.status(400);
+                    res.send(response);
+                } else {
+                    latestUser.id = response.id;
+                    latestUser.name = response.name;
+                    latestUser.createdAt = response.createdAt;
         
-                res.status(201);
-                res.header("Content-Type",'application/json');
-                res.send(JSON.stringify(latestUser, null, 4));
+                    res.status(201);
+                    res.header("Content-Type",'application/json');
+                    res.send(JSON.stringify(latestUser, null, 4));
+                }
+
             });
         }
         
@@ -110,20 +129,27 @@ router.put("/:id(\\d+)/", function(req, res) {
                 // Otherwise, proceed.
 
                 // Create new user object from the request's body.
-                const newUser = {
+                const newUser = { 
                     id: req.params.id,
                     name: req.body.name
                 };
 
                 updateUser(newUser, function(updateResponse){
-                    var updatedUser = {};
-                    updatedUser.id = updateResponse.id;
-                    updatedUser.name = updateResponse.name;
-                    updatedUser.createdAt = updateResponse.createdAt;
-        
-                    res.status(200);
-                    res.header("Content-Type",'application/json');
-                    res.send(JSON.stringify(updatedUser, null, 4));
+
+                    if(updateResponse.message != undefined) {
+                        res.status(400);
+                        res.send(updateResponse.message);
+                    } else {
+                        var updatedUser = {};
+                        updatedUser.id = updateResponse.id;
+                        updatedUser.name = updateResponse.name;
+                        updatedUser.createdAt = updateResponse.createdAt;
+            
+                        res.status(200);
+                        res.header("Content-Type",'application/json');
+                        res.send(JSON.stringify(updatedUser, null, 4));
+                    }
+                    
                 });
 
             });

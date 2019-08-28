@@ -61,18 +61,15 @@ const createUser = (userObject, callback) => {
 
         var encryptedPassword = hash;
 
-        const newUser = User.build({ 
+        const newUser = User.create({
             name: userObject.name,
             password: encryptedPassword
+        }).then(function(newestUser){
+           return callback(newestUser);
+        }).catch(function (err) {
+            return callback(err.message);
         });
     
-        newUser.save().
-        then(function(latestUser){
-            return callback(latestUser);
-        }).catch(function (err) {
-            console.log("Error Identified: " + err);
-        });
-
     });
 
 };
@@ -84,7 +81,7 @@ const updateUser = (userObject, callback) => {
         { where: { id: userObject.id }, returning: true, plain: true } 
     ).
     then(function(updatedUserResponse){
-
+        
         var updated = {
             id: updatedUserResponse[1].dataValues.id,
             name: updatedUserResponse[1].dataValues.name,
@@ -94,7 +91,7 @@ const updateUser = (userObject, callback) => {
         return callback(updated);
 
     }).catch(function (err) {
-        console.log("Error Identified: " + err);
+        return callback(err);
     });
 
 };
