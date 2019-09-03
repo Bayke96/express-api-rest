@@ -49,7 +49,7 @@ router.get("/:id(\\d+)/", function(req, res) {
         // If an user has been found.
         if(response != null) {
 
-            var foundUser = {
+            const foundUser = {
                 id: response.id,
                 name: response.name,
                 createdAt: response.createdAt
@@ -177,7 +177,7 @@ router.delete("/:id(\\d+)/", function(req, res) {
                 // If an user has been found.
                 if(response != null) {
         
-                    var deletedUser = {
+                    const deletedUser = {
                         id: deleteResponse.id,
                         name: deleteResponse.name,
                         createdAt: deleteResponse.createdAt

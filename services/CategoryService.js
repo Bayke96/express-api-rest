@@ -24,4 +24,47 @@ const listCategories = (callback) => {
 
 };
 
-module.exports = { listCategories };
+const getCategory = (categoryID, callback) => {
+
+    Category.findByPk(categoryID).
+    then(function(foundCategory){
+        return callback(foundCategory);
+    }).catch(function (err) {
+        console.log("Error Identified: " + err);
+    });
+
+};
+
+const getCategoryByName = (categoryName, callback) => {
+
+    var findCategory = categoryName.toString().toUpperCase();
+    Category.findAll({
+        limit: 1,
+        attributes: ["id", "name", "employees"],
+        where: sequelize.where(
+            sequelize.fn('upper', sequelize.col('name')), 
+            sequelize.fn('upper', findCategory)
+          )
+    }).
+    then(function(foundCategory){
+        return callback(foundCategory.length);
+    }).catch(function (err) {
+        return callback(null);
+    });
+
+};
+
+const createCategory = (categoryObject, callback) => {
+
+    const newCategory = Category.create({
+        name: categoryObject.name,
+        employees: 0
+    }).then(function(newestCategory){
+        return callback(newestCategory);
+    }).catch(function (err) {
+        return callback(err.message);
+    });
+
+};
+
+module.exports = { listCategories, getCategory, getCategoryByName, createCategory };
