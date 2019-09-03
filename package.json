@@ -4,7 +4,8 @@
   "description": "REST API",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,8 @@
     "express": "^4.17.1",
     "pg": "^7.12.1",
     "sequelize": "^5.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
   }
 }

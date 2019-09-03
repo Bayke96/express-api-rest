@@ -23,20 +23,19 @@ router.get("/", function(req, res) {
         if(response != null) {
             // If more than one user has been found, return a list.
             if(response.length >= 1) {
-                res.status(200);
-                res.header("Content-Type",'application/json');
-                res.send(JSON.stringify(response, null, 4));
+                return res.status(200).json({
+                    ok: true,
+                    response
+                });
             } else {
                 // Otherwise, return not found.
-                res.status(204);
-                res.send(null);
+                return res.status(204);
             }
         } 
         // If there's an error, return error 404.
         else 
         {
-            res.status(500);
-            res.send(null);
+            return res.status(500);
         }
     });
 
@@ -49,29 +48,38 @@ router.get("/:id(\\d+)/", function(req, res) {
         // If an user has been found.
         if(response != null) {
 
-            var foundUser = {
+            const foundUser = {
                 id: response.id,
                 name: response.name,
                 createdAt: response.createdAt
             };
 
-            res.status(200);
-            res.header("Content-Type",'application/json');
-            res.send(JSON.stringify(foundUser, null, 4));
+            return res.status(200).json({
+                ok: false,
+                foundUser
+            });
         } 
         // Otherwise
         else 
         {
-            res.status(404);
-            res.send(null);
+            return res.status(404);
         }
     });
 
 });
 
 router.post("/", function(req, res) {
+    if (!req.body.name || !req.body.password) {
+        return res.status(422).json({
+            ok: false,
+            data: {
+                msg: "no data",
+                route: "/users/",
+                method: "post"
+            }
+        });
+    }
 
-    let latestUser = {};
     // Create new user object from the request's body.
     const newUser = User.build({ 
         name: req.body.name,
@@ -81,22 +89,36 @@ router.post("/", function(req, res) {
     getUserByName(newUser.name, function(response){
         // There's already an user with this name.
         if(response.length > 0) {
-            res.status(409);
-            res.send("There's already an user with this name.");
+            return res.status(409).json({
+                ok: false,
+                data: {
+                    msg: "There's already an user with this name.",
+                    route: "/users/",
+                    method: "post"
+                }
+            });
         } else {
             createUser(newUser, function(response){
-
                 if(response.dataValues == undefined) {
-                    res.status(400);
-                    res.send(response);
+                    return res.status(400).json({
+                        ok: false,
+                        data: {
+                            msg: response,
+                            route: "/users/",
+                            method: "post"
+                        }
+                    });
                 } else {
-                    latestUser.id = response.id;
-                    latestUser.name = response.name;
-                    latestUser.createdAt = response.createdAt;
+                    const latestUser = {
+                        id: response.id,
+                        name: response.name,
+                        createdAt: response.createdAt
+                    };
         
-                    res.status(201);
-                    res.header("Content-Type",'application/json');
-                    res.send(JSON.stringify(latestUser, null, 4));
+                    return res.status(201).json({
+                        ok: true,
+                        latestUser
+                    });
                 }
 
             });
@@ -122,8 +144,14 @@ router.put("/:id(\\d+)/", function(req, res) {
 
                     // If there's another user with this name, return a conflict.
                     if(foundID != req.params.id && oldName == newName) {
-                        res.status(409);
-                        res.send("There's already an user with this name.");
+                        return res.status(409).json({
+                            ok: false,
+                            data: {
+                                msg: "There's already an user with this name.",
+                                route: `/users/${req.params.id}`,
+                                method: "put"
+                            }
+                        });
                     }
                 } 
                 // Otherwise, proceed.
@@ -137,17 +165,25 @@ router.put("/:id(\\d+)/", function(req, res) {
                 updateUser(newUser, function(updateResponse){
 
                     if(updateResponse.message != undefined) {
-                        res.status(400);
-                        res.send(updateResponse.message);
+                        return res.status(409).json({
+                            ok: false,
+                            data: {
+                                msg: updateResponse.message,
+                                route: `/users/${req.params.id}`,
+                                method: "put"
+                            }
+                        });
                     } else {
-                        var updatedUser = {};
-                        updatedUser.id = updateResponse.id;
-                        updatedUser.name = updateResponse.name;
-                        updatedUser.createdAt = updateResponse.createdAt;
-            
-                        res.status(200);
-                        res.header("Content-Type",'application/json');
-                        res.send(JSON.stringify(updatedUser, null, 4));
+                        const updatedUser = {
+                            id: updateResponse.id,
+                            name: updateResponse.name,
+                            createdAt: updateResponse.createdAt
+                        };
+
+                        return res.status(200).json({
+                            ok: true,
+                            updatedUser
+                        });
                     }
                     
                 });
@@ -158,8 +194,7 @@ router.put("/:id(\\d+)/", function(req, res) {
         // Otherwise
         else 
         {
-            res.status(404);
-            res.send(null);
+            return res.status(404);
         }
     });
 
@@ -177,21 +212,21 @@ router.delete("/:id(\\d+)/", function(req, res) {
                 // If an user has been found.
                 if(response != null) {
         
-                    var deletedUser = {
+                    const deletedUser = {
                         id: deleteResponse.id,
                         name: deleteResponse.name,
                         createdAt: deleteResponse.createdAt
                     };
-        
-                    res.status(200);
-                    res.header("Content-Type",'application/json');
-                    res.send(JSON.stringify(deletedUser, null, 4));
+
+                    return res.status(200).json({
+                        ok: true,
+                        deletedUser
+                    });
                 } 
                 // Otherwise
                 else 
                 {
-                    res.status(404);
-                    res.send(null);
+                    return res.status(404);
                 }
             });
 
@@ -199,8 +234,7 @@ router.delete("/:id(\\d+)/", function(req, res) {
         // Otherwise
         else 
         {
-            res.status(404);
-            res.send(null);
+            return res.status(404);
         }
     });
 
