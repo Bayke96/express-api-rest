@@ -1,6 +1,6 @@
-const Sequelize = require('sequelize');
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const Sequelize = require("sequelize");
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "/../config/config.json")[env];
 
 const sequelize = new Sequelize(
     config.database, 
@@ -9,7 +9,7 @@ const sequelize = new Sequelize(
     config
 );
 
-const Category = sequelize.import('../models/category');
+const Category = sequelize.import("../models/category");
 
 const listCategories = (callback) => {
 
@@ -42,8 +42,8 @@ const getCategoryByName = (categoryName, callback) => {
         limit: 1,
         attributes: ["id", "name", "employees"],
         where: sequelize.where(
-            sequelize.fn('upper', sequelize.col('name')), 
-            sequelize.fn('upper', findCategory)
+            sequelize.fn("upper", sequelize.col("name")), 
+            sequelize.fn("upper", findCategory)
           )
     }).
     then(function(foundCategory){

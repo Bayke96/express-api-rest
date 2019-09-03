@@ -1,9 +1,9 @@
 var express = require("express");
 var router = express.Router();
-const Sequelize = require('sequelize');
+const Sequelize = require("sequelize");
 
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "/../config/config.json")[env];
 
 const sequelize = new Sequelize(
     config.database, 
@@ -12,7 +12,7 @@ const sequelize = new Sequelize(
     config
 );
 
-const User = sequelize.import('../models/user');
+const User = sequelize.import("../models/user");
 const { listUsers, getUser, getUserByName, createUser, updateUser, deleteUser } = require("../services/UserService");
 
 router.get("/", function(req, res) {
@@ -24,7 +24,7 @@ router.get("/", function(req, res) {
             // If more than one user has been found, return a list.
             if(response.length >= 1) {
                 res.status(200);
-                res.header("Content-Type",'application/json');
+                res.header("Content-Type", "application/json");
                 res.send(JSON.stringify(response, null, 4));
             } else {
                 // Otherwise, return not found.
@@ -56,7 +56,7 @@ router.get("/:id(\\d+)/", function(req, res) {
             };
 
             res.status(200);
-            res.header("Content-Type",'application/json');
+            res.header("Content-Type", "application/json");
             res.send(JSON.stringify(foundUser, null, 4));
         } 
         // Otherwise
@@ -95,7 +95,7 @@ router.post("/", function(req, res) {
                     latestUser.createdAt = response.createdAt;
         
                     res.status(201);
-                    res.header("Content-Type",'application/json');
+                    res.header("Content-Type", "application/json");
                     res.send(JSON.stringify(latestUser, null, 4));
                 }
 
@@ -146,7 +146,7 @@ router.put("/:id(\\d+)/", function(req, res) {
                         updatedUser.createdAt = updateResponse.createdAt;
             
                         res.status(200);
-                        res.header("Content-Type",'application/json');
+                        res.header("Content-Type", "application/json");
                         res.send(JSON.stringify(updatedUser, null, 4));
                     }
                     
@@ -184,7 +184,7 @@ router.delete("/:id(\\d+)/", function(req, res) {
                     };
         
                     res.status(200);
-                    res.header("Content-Type",'application/json');
+                    res.header("Content-Type", "application/json");
                     res.send(JSON.stringify(deletedUser, null, 4));
                 } 
                 // Otherwise

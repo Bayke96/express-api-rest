@@ -1,7 +1,7 @@
-const Sequelize = require('sequelize');
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
-const bcrypt = require('bcrypt');
+const Sequelize = require("sequelize");
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "/../config/config.json")[env];
+const bcrypt = require("bcrypt");
 
 const sequelize = new Sequelize(
     config.database, 
@@ -10,7 +10,7 @@ const sequelize = new Sequelize(
     config
 );
 
-const User = sequelize.import('../models/user');
+const User = sequelize.import("../models/user");
 
 const listUsers = (callback) => {
 
@@ -43,8 +43,8 @@ const getUserByName = (username, callback) => {
         limit: 1,
         attributes: ["id", "name", "createdAt"],
         where: sequelize.where(
-            sequelize.fn('upper', sequelize.col('name')), 
-            sequelize.fn('upper', searchUsername)
+            sequelize.fn("upper", sequelize.col("name")), 
+            sequelize.fn("upper", searchUsername)
           )
     }).
     then(function(foundUser){
