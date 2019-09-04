@@ -131,11 +131,12 @@ router.put("/:id(\\d+)/", function(req, res) {
                 // Otherwise, proceed.
 
                 // Create new category object from the request's body.
-                const newCategory = { 
+
+                const newCategory = Category.build({ 
                     id: req.params.id,
                     name: req.body.name,
                     employees: parseInt(req.body.employees)
-                };
+                });
 
                 updateCategory(newCategory, function(updateResponse){
 

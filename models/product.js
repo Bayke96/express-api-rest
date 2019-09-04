@@ -1,38 +1,61 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Product = sequelize.define('Product', {
+  const Product = sequelize.define("Product", {
     categoryFK: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      isInt: true
+      validate: {
+        isInt: {
+          args: [true],
+          msg: "The category's foreign key ammount must be an integer."
+        },
+        min: {
+          args: [1],
+          msg: "The category's foreign key value cannot be less than 1"
+        }
+      }
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
-      len: {
-        args: [3, 128],
-        msg: 'The name field must contain between 3 and 128 characters.'
+      validate: {
+        len: {
+          args: [3, 128],
+          msg: "The name field must contain between 3 and 128 characters."
+        }
       }
     },
     description: {
       type: DataTypes.STRING,
       allowNull: false,
-      len: {
-        args: [3, 128],
-        msg: 'The description field must contain between 3 and 128 characters.'
+      validate: {
+        len: {
+          args: [3, 128],
+          msg: "The description field must contain between 3 and 128 characters."
+        }
       }
     },
     price: {
       type: DataTypes.DOUBLE,
       allowNull: false,
-      min: 0
+      validate: {
+        min: {
+          args: [0],
+          msg: "The price cannot be under 0."
+        }
+      }
     },
     units: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      min: 0,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: {
+        min: {
+          args: [0],
+          msg: "The units value cannot be under 0."
+        }
+      }
     }
   }, {});
   Product.associate = function(models) {
@@ -42,6 +65,6 @@ module.exports = (sequelize, DataTypes) => {
 };
 
 Product.hasMany(Category, {
-  foreignKey: 'categoryFK',
-  sourceKey: 'id'
+  foreignKey: "categoryFK",
+  sourceKey: "id"
 });
