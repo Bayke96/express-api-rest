@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
 );
 
 const Category = sequelize.import("../models/category");
-const { listCategories, getCategory, getCategoryByName, createCategory } = require("../services/CategoryService");
+const { listCategories, getCategory, getCategoryByName, createCategory, updateCategory, deleteCategory } = require("../services/CategoryService");
 
 router.get("/", function(req, res) {
 
@@ -80,15 +80,17 @@ router.post("/", function(req, res) {
 
     getCategoryByName(newCategory.name, function(response){
         // There's already an category with this name.
-        if(response > 0) {
+        if(response.length > 0) {
             res.status(409);
             res.send("There's already a category with this name.");
+            return false;
         } else {
             createCategory(newCategory, function(response){
 
                 if(response.dataValues == undefined) {
                     res.status(400);
                     res.send(response);
+                    return false;
                 } else {
                     latestCategory.id = response.id;
                     latestCategory.name = response.name;
@@ -107,13 +109,105 @@ router.post("/", function(req, res) {
 });
 
 router.put("/:id(\\d+)/", function(req, res) {
-    res.status(200);
-    res.header("Content-Type", "application/json");
+    
+    getCategory(req.params.id, function(response){
+        // If a category has been found.
+        if(response != null) {
+
+            getCategoryByName(req.body.name, function(foundResponse){
+
+                if(foundResponse.length > 0) {
+                    let foundID = foundResponse[0].dataValues.id;
+                    let oldName = foundResponse[0].dataValues.name.toString().toUpperCase();
+                    let newName = req.body.name.toString().toUpperCase();
+
+                    // If there's another category with this name, return a conflict.
+                    if(foundID != req.params.id && oldName == newName) {
+                        res.status(409);
+                        res.send("There's already a category with this name.");
+                        return false;
+                    }
+                } 
+                // Otherwise, proceed.
+
+                // Create new category object from the request's body.
+                const newCategory = { 
+                    id: req.params.id,
+                    name: req.body.name,
+                    employees: parseInt(req.body.employees)
+                };
+
+                updateCategory(newCategory, function(updateResponse){
+
+                    if(updateResponse.message != undefined) {
+                        res.status(400);
+                        res.send(updateResponse.message);
+                        return false;
+                    } else {
+                        var updatedCategory = {};
+                        updatedCategory.id = updateResponse.id;
+                        updatedCategory.name = updateResponse.name;
+                        updatedCategory.employees = updateResponse.employees;
+            
+                        res.status(200);
+                        res.header("Content-Type", "application/json");
+                        res.send(JSON.stringify(updatedCategory, null, 4));
+                    }
+                    
+                });
+
+            });
+
+        } 
+        // Otherwise
+        else 
+        {
+            res.status(404);
+            res.send(null);
+        }
+    });
+
 });
 
 router.delete("/:id(\\d+)/", function(req, res) {
-    res.status(200);
-    res.header("Content-Type", "application/json");
+    
+    getCategory(req.params.id, function(response){
+
+        // If a category has been found.
+        if(response != null) {
+
+            deleteCategory(req.params.id, function(deleteResponse){
+
+                // If a category has been found.
+                if(response != null) {
+        
+                    const deletedCategory = {
+                        id: deleteResponse.id,
+                        name: deleteResponse.name,
+                        employees: deleteResponse.employees
+                    };
+        
+                    res.status(200);
+                    res.header("Content-Type", "application/json");
+                    res.send(JSON.stringify(deletedCategory, null, 4));
+                } 
+                // Otherwise
+                else 
+                {
+                    res.status(404);
+                    res.send(null);
+                }
+            });
+
+        } 
+        // Otherwise
+        else 
+        {
+            res.status(404);
+            res.send(null);
+        }
+    });
+
 });
 
 module.exports = router;

@@ -47,7 +47,7 @@ const getCategoryByName = (categoryName, callback) => {
           )
     }).
     then(function(foundCategory){
-        return callback(foundCategory.length);
+        return callback(foundCategory);
     }).catch(function (err) {
         return callback(null);
     });
@@ -67,4 +67,53 @@ const createCategory = (categoryObject, callback) => {
 
 };
 
-module.exports = { listCategories, getCategory, getCategoryByName, createCategory };
+const updateCategory = (categoryObject, callback) => {
+
+    Category.update(
+        { 
+            name: categoryObject.name,
+            employees: parseInt(categoryObject.employees)
+        },
+        { where: { id: categoryObject.id }, returning: true, plain: true } 
+    ).
+    then(function(updatedCategory){
+        
+        var updated = {
+            id: updatedCategory[1].dataValues.id,
+            name: updatedCategory[1].dataValues.name,
+            employees: parseInt(updatedCategory[1].dataValues.employees)
+        };
+
+        return callback(updated);
+
+    }).catch(function (err) {
+        return callback(err);
+    });
+
+};
+
+const deleteCategory = (categoryID, callback) => {
+
+    getCategory(categoryID, function(findCategoryResponse){
+
+        var deleted = {
+            id: findCategoryResponse.dataValues.id,
+            name: findCategoryResponse.dataValues.name,
+            employees: findCategoryResponse.dataValues.employees
+        };
+
+        Category.destroy(
+            { where: { id: categoryID }, returning: true, plain: true } 
+        ).
+        then(function(deletedCategoryResponse){
+            return callback(deleted);
+    
+        }).catch(function (err) {
+            console.log("Error Identified: " + err);
+        });
+
+    });
+
+};
+
+module.exports = { listCategories, getCategory, getCategoryByName, createCategory, updateCategory, deleteCategory };

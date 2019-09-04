@@ -83,12 +83,14 @@ router.post("/", function(req, res) {
         if(response.length > 0) {
             res.status(409);
             res.send("There's already an user with this name.");
+            return false;
         } else {
             createUser(newUser, function(response){
 
                 if(response.dataValues == undefined) {
                     res.status(400);
                     res.send(response);
+                    return false;
                 } else {
                     latestUser.id = response.id;
                     latestUser.name = response.name;
@@ -124,6 +126,7 @@ router.put("/:id(\\d+)/", function(req, res) {
                     if(foundID != req.params.id && oldName == newName) {
                         res.status(409);
                         res.send("There's already an user with this name.");
+                        return false;
                     }
                 } 
                 // Otherwise, proceed.
@@ -139,6 +142,7 @@ router.put("/:id(\\d+)/", function(req, res) {
                     if(updateResponse.message != undefined) {
                         res.status(400);
                         res.send(updateResponse.message);
+                        return false;
                     } else {
                         var updatedUser = {};
                         updatedUser.id = updateResponse.id;
