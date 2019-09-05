@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
 );
 
 const Product = sequelize.import("../models/product");
-const { listProducts } = require("../services/ProductService");
+const { listProducts, getProduct } = require("../services/ProductService");
 
 router.get("/category/:id(\\d+)/", function(req, res) {
     
@@ -43,8 +43,33 @@ router.get("/category/:id(\\d+)/", function(req, res) {
 });
 
 router.get("/:id(\\d+)/", function(req, res) {
-    res.status(200);
-    res.header("Content-Type",'application/json');
+
+    getProduct(req.params.id, function(response){
+
+        // If an user has been found.
+        if(response != null) {
+
+            const foundProduct = {
+                id: response.id,
+                categoryFK: response.categoryFK,
+                name: response.name,
+                description: response.description,
+                price: response.price,
+                units: response.units
+            };
+
+            res.status(200);
+            res.header("Content-Type", "application/json");
+            res.send(JSON.stringify(foundProduct, null, 4));
+        } 
+        // Otherwise
+        else 
+        {
+            res.status(404);
+            res.send(null);
+        }
+    });
+
 });
 
 router.post("/", function(req, res) {
